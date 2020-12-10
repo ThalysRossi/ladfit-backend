@@ -1,0 +1,39 @@
+{
+  "name": "academia-nassau-back",
+  "version": "1.0.0",
+  "description": "backend for gym system",
+  "main": "index.js",
+  "author": "LADSOFT",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "build": "sucrase ./src -d ./dist --transforms imports",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:debug": "nodemon --inspect src/server.js"
+  },
+  "dependencies": {
+    "@sentry/node": "^5.22.3",
+    "@sentry/tracing": "^5.22.3",
+    "bcryptjs": "^2.4.3",
+    "chalk": "^4.1.0",
+    "cors": "^2.8.5",
+    "date-fns": "^2.0.0-beta.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-async-errors": "^3.1.1",
+    "jsonwebtoken": "^8.5.1",
+    "knex": "^0.21.4",
+    "mysql2": "^2.1.0",
+    "path": "^0.12.7",
+    "youch": "^2.0.10",
+    "yup": "^0.29.3"
+  },
+  "devDependencies": {
+    "eslint": "^7.7.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.0",
+    "nodemon": "^2.0.4",
+    "sucrase": "^3.15.0"
+  }
+}
