@@ -7,6 +7,7 @@ const Sentry = require('@sentry/node');
 require('express-async-errors');
 const routes = require('./routes');
 const sentryConfig = require('./config/sentry');
+const path = require('path');
 
 class App {
   constructor() {
@@ -23,6 +24,14 @@ class App {
     this.server.use(Sentry.Handlers.requestHandler());
     this.server.use(cors());
     this.server.use(express.json());
+   /* this.server.use(
+      '/exercicios/upload',
+      express.static(path.resolve(__dirname, '..', 'img', 'uploads'))
+    );
+    this.server.use(
+      '/usuario/upload',
+      express.static(path.resolve(__dirname, '..', 'img', 'uploads'))
+    );*/
   }
 
   routes() {

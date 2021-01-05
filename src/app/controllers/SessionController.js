@@ -9,15 +9,15 @@ class SessionController {
   async store(req, res) {
     Logger.header('controller - session - store');
 
-    const { email, senha } = req.body;
-    Logger.log(`[${email}][${senha}]`);
+    const { email, password } = req.body;
+    Logger.log(`[${email}][${password}]`);
 
     /**
      * Validação de entradas
      */
     const schema = Yup.object().shape({
       email: Yup.string().email().required(),
-      senha: Yup.string().min(6).required(),
+      password: Yup.string().min(6).required(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -28,9 +28,9 @@ class SessionController {
     /**
      * Verifica se há um email em uso no BD.
      */
-    const [userExists] = await connection('usuario')
-      .select('usuario.*')
-      .where({ 'usuario.email': email });
+    const [userExists] = await connection('users')
+      .select('users.*')
+      .where({ 'users.email': email });
 
     if (!userExists) {
       Logger.error('User not found');
@@ -40,11 +40,11 @@ class SessionController {
     /**
      * Compara a senha inserida com a presente no BD.
      */
-    const checkPassword = (senha) => {
-      return bcrypt.compare(senha, userExists.senha_hash);
+    const checkPassword = (password) => {
+      return bcrypt.compare(password, userExists.password_hash);
     };
 
-    if (!(await checkPassword(senha))) {
+    if (!(await checkPassword(password))) {
       Logger.error('Password does not match');
       return res.status(401).json({ error: 'Password does not match' });
     }
@@ -53,11 +53,10 @@ class SessionController {
     return res.json({
       user: {
         id: userExists.id,
-        matricula: userExists.matricula,
-        primeiro_nome: userExists.primeiro_nome,
-        sobrenome: userExists.sobrenome,
+        first_name: userExists.first_name,
+        surname: userExists.surname,
         email: userExists.email,
-        telefone: userExists.telefone,
+        user_type: userExists.user_type,
       },
       token: jwt.sign({ id: userExists.id }, authConfig.secret, {
         expiresIn: authConfig.expiresIn,
