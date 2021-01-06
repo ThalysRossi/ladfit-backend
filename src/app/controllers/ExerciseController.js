@@ -8,7 +8,7 @@ const Yup = require('yup');
 class ExerciseController {
   async store(req, res) {
     Logger.header('Controller - Exercicios - Store');
-    const { exe_type, muscle_group, exe_name, } = req.body;
+    const { exe_type, muscle_group, exe_name } = req.body;
     Logger.log(
       `[${exe_type}][${muscle_group}][${exe_name}]`
     );
@@ -68,6 +68,26 @@ class ExerciseController {
       id: exerciseId,
       ...exercise,
     });
+  }
+
+  async upload (req, res){
+    const { originalname: img_name, filename: img_path } = req.file;
+        const file = {
+          img_name,
+          img_path,
+          img_type: 'Exercise'
+        };
+        console.log(req.file);
+        
+          const insertedFile = await connection('img_paths').insert(file);
+          const updateExercise = await connection('exercises')
+            .update({ img_path: insertedFile[0] })
+            .where({ 'exercises.id': req.params.id });
+        
+        Logger.success('[200]');
+        return res.json({
+          pic: file
+        });
   }
   
   async list (req, res) {
@@ -143,9 +163,9 @@ class ExerciseController {
      * Validação de entradas
      */
     const schema = Yup.object().shape({
-      exe_type: Yup.string().max(15),
-      muscle_group: Yup.string().max(20),
-      exe_name: Yup.string().max(100),
+      exe_type: Yup.string().required('Type is required').max(15),
+      muscle_group: Yup.string().required('Muscle group is required').max(20),
+      exe_name: Yup.string().required('Name is required').max(100),
     });
 
     if (!(await schema.isValid(req.body))) {

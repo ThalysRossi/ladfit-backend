@@ -29,11 +29,11 @@ class UserController {
   */
 
     const schema = Yup.object().shape({
-      first_name: Yup.string().required().max(50),
-      surname: Yup.string().required().max(80),
-      email: Yup.string().email().required(),    
-      password: Yup.string().required().min(6),
-      confirmPassword: Yup.string().required().min(6)
+      first_name: Yup.string().required('First name is required').max(50),
+      surname: Yup.string().required('Surname is required').max(80),
+      email: Yup.string().email().required('Email is required'),    
+      password: Yup.string().required('Password is required').min(6),
+      confirmPassword: Yup.string().required('Password confirmation is required').min(6)
       .test('passwords-match', 'Passwords must match', function(value){
         return this.parent.password === value
       })
@@ -74,18 +74,18 @@ class UserController {
     const hashedPassword = await bcrypt.hash(password, 8);
 
     //instructor logic
-    //if(instructorKey){
-    //    const hashedKey = await bcrypt.hash(instructorKey, 8);
-    //}
+    
 
     const user = {
       first_name,
       surname,
       email,
       password_hash: hashedPassword,
-      user_type: 'Aluno',
+      user_type: '4',
     };
-
+    /*if(instructorKey){
+      const hashedKey = await bcrypt.hash(instructorKey, 8);
+    }*/
 
     /**
      * Insere os dados no banco e retorna o usuário
