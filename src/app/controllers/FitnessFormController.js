@@ -4,12 +4,12 @@ const connection = require('../../database/connection');
 const Logger = require('../../lib/logger');
 
 class FitnessFormController {
-    async store(req, res){
+  async store(req, res){
 
-      //Checks if form is already answered
-      const isAnswered = await connection('fitness_form')
-        .select('fitness_form.*')
-        .where({'fitness_form.student_id': req.params.id});
+    //Checks if form is already answered
+    const isAnswered = await connection('fitness_form')
+      .select('fitness_form.*')
+      .where({'fitness_form.student_id': req.params.id});
       if(isAnswered.length > 0){
         Logger.error('[403] - Form already answered');
         return res.status(403).json({ error: 'Form already answered'})
@@ -39,6 +39,7 @@ class FitnessFormController {
         .select('users.*')
         .where({'users.id': req.userId})
         .andWhere('users.user_type', '=', '3');
+     /* evil code 
       let form = {};
       if(isInstructor.length > 0){
           console.log('hey');
@@ -59,9 +60,9 @@ class FitnessFormController {
           id: insertForm.id,
           ...insertForm
         });
-      }
+      }*/
       
-        form = {
+      const form = {
             student_id: req.params.id,
             question_1, 
             question_2, 
