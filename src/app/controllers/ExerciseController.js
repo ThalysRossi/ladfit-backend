@@ -3,7 +3,6 @@ const Logger = require('../../lib/logger');
 
 const Yup = require('yup');
 
-//Change validation methodology
 
 class ExerciseController {
   async store(req, res) {

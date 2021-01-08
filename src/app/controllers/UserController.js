@@ -12,22 +12,6 @@ class UserController {
       `[${first_name}][${surname}][${email}][${user_type}][${password}][${confirmPassword}][${instructor_key}]`
     );
 
-    /*receive pic, transfer to profile controllers
-
-    const { originalname: nome, filename: caminho } = req.file;
-    const file = {
-      nome,
-      caminho,
-    };
-    console.log(req.file);
-    if(file){
-      const insertedFile = await connection('arquivos_img').insert(file);
-      const updateUsuario = await connection('usuario')
-        .update({ avatar_id: insertedFile[0] })
-        .where({ id: userId });
-    }
-  */
-
     const schema = Yup.object().shape({
       first_name: Yup.string().required('First name is required').max(50),
       surname: Yup.string().required('Surname is required').max(80),
@@ -37,8 +21,7 @@ class UserController {
       .test('passwords-match', 'Passwords must match', function(value){
         return this.parent.password === value
       })
-      
-      
+           
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -190,7 +173,7 @@ class UserController {
     await connection('users').update(user).where({ 'users.id': req.userId });
 
     Logger.success('[200]');
-    return res.json({
+    return res.status(200).json({
       id: req.userId,
       ...user,
     });
@@ -202,14 +185,11 @@ class UserController {
     const { search } = req.query;     
     
     let users = connection('users')
-        .select(
-          'users.*',
-        )
-        .orderBy('users.first_name');
+      .select('users.*',)
+      .orderBy('users.first_name');
     
     if (search) {
-      users = users.where('users.first_name', 'like', `%${search}%`)
-                    .orWhere('users.surname', 'like', `%${search}%`);
+      users = users.where('users.first_name', 'like', `%${search}%`).orWhere('users.surname', 'like', `%${search}%`);
     } 
     const query = await users;
 
@@ -224,35 +204,29 @@ class UserController {
 
       Logger.success('[200]');
 
-      return res.json(userList);
+      return res.status(200).json(userList);
     }
 
   async listOne(req, res) {
     Logger.header('Controller - User - List One');
 
-    const usuario  = await connection('usuario')
-      .select('usuario.*')
-      .where({'usuario.id': req.params.id})
+    const user  = await connection('users')
+      .select('users.*')
+      .where({'users.id': req.params.id})
     
-    if(usuario.length === 0) { 
+    if(user.length === 0) { 
       Logger.error('User not found');
-      return res.status(404).json({ error: 'Usuário não encontrado' });
+      return res.status(404).json({ error: 'User not found' });
     }
-    const usuarioInfo = usuario.map((row) => {
+    const userInfo = user.map((row) => {
       return {
-        nome: row.primeiro_nome,
-        sobrenome: row.sobrenome,
-        matricula: row.matricula,
+        first_name: row.first_name,
+        surname: row.surname,
         email: row.email,
-        telefone: row.telefone,
       }
     });
       Logger.success('[200]');
-      return res.json(usuarioInfo);
-    
-    
-
-
+      return res.status(200).json(userInfo);
 
   }
 }
