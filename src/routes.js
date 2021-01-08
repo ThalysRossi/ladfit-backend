@@ -35,6 +35,7 @@ routes.put('/exercises/:id', ExerciseController.update);
 routes.get('/user', UserController.list);
 routes.get('/user/:id', UserController.listOne);
 routes.get('/user/:id/form', FitnessFormController.list);
+routes.get('/instructor-profile/:id', InstructorProfileController.listOne);
 routes.get('/student-profile', StudentProfileController.list);
 routes.get('/student-profile/:id', StudentProfileController.listOne);
 routes.get('/exercises/:id', ExerciseController.listOne);

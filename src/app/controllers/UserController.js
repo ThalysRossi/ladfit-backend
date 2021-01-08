@@ -41,22 +41,12 @@ class UserController {
       return res.status(403).json({ error: 'User already exists' });
     }
 
-    /* studentId validation, transport to other controller
-      const [studentIdExists] = await connection('usuario')
-      .select('usuario.*')
-      .where({ 'usuario.matricula': matricula });
-
-    if (studentIdExists) {
-      Logger.error('User already exists');
-      return res.status(403).json({ error: 'User already exists' });
-    }*/
-
     /**
      * Criptografa a senha.
      */
     const hashedPassword = await bcrypt.hash(password, 8);
 
-    //instructor logic
+    //instructor logic ?
     
 
     const user = {
@@ -66,9 +56,6 @@ class UserController {
       password_hash: hashedPassword,
       user_type: '4',
     };
-    /*if(instructorKey){
-      const hashedKey = await bcrypt.hash(instructorKey, 8);
-    }*/
 
     /**
      * Insere os dados no banco e retorna o usuário
