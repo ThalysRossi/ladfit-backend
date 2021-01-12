@@ -142,17 +142,15 @@ class StudentProfileController{
     );     
 
     const schema = Yup.object().shape({
-      birthdate: Yup.date().required('Birthdate is required'),
-      gender: Yup.string().required('Gender is required').min(5).max(10),
-      phone: Yup.string().required('Phone is required').min(9).max(11),
-      motivation: Yup.string().required('Motivation is required').min(5).max(255),
-      history: Yup.string().required('History is required').min(5),
-      weight: Yup.number().required('Weight is required')
-      .positive('Weight cannot be negative').min(30.50).max(300.00),
-      height: Yup.number().required('Height is required')
-      .positive('Height cannot be negative').min(1.00).max(2.55),
-      availability: Yup.string().required('Availability is required')
-      });
+      birthdate: Yup.date(),
+      gender: Yup.string().min(5).max(10),
+      phone: Yup.string().min(9).max(11),
+      motivation: Yup.string().min(5).max(255),
+      history: Yup.string().min(5),
+      weight: Yup.number().positive('Weight cannot be negative').min(30.50).max(300.00),
+      height: Yup.number().positive('Height cannot be negative').min(1.00).max(2.55),
+      availability: Yup.string()
+    });
     if (!(await schema.isValid(req.body))) {
       Logger.error('Validation failed');
       return res.status(400).json({ error: 'Validation failed' });

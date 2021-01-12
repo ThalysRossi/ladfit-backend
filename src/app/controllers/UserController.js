@@ -20,7 +20,8 @@ class UserController {
       confirmPassword: Yup.string().required('Password confirmation is required').min(6)
       .test('passwords-match', 'Passwords must match', function(value){
         return this.parent.password === value
-      })
+      }),
+      instructor_key: Yup.string().min(8).max(8)
            
     });
 
@@ -46,15 +47,25 @@ class UserController {
      */
     const hashedPassword = await bcrypt.hash(password, 8);
 
-    //instructor logic ?
-    
+    //Checks if instructor key is valid
+    if(instructor_key){
+      const isKeyValid = await connection('instructor_keys')
+        .select('instructor_keys.*')
+        .where({'instructor_keys.temp_key': instructor_key})
+        .andWhere({'instructor_keys.email': email});
+      if(isKeyValid.length === 0){
+        Logger.error('Invalid Instructor Key');
+        return res.status(400).json({ error: 'Invalid Instructor Key' });
+      }
+    }
 
     const user = {
       first_name,
       surname,
       email,
       password_hash: hashedPassword,
-      user_type: '4',
+      user_type: instructor_key? '3' : '4',
+      instructor_key: instructor_key? instructor_key : null
     };
 
     /**
@@ -154,7 +165,7 @@ class UserController {
       surname: surname || userExists.surname, 
       email: email || userExists.email, 
       user_type: user_type || userExists.user_type, 
-      password_hash: password || userExists.hashedPassword, 
+      password_hash: hashedPassword || userExists.hashedPassword, 
     };
 
     await connection('users').update(user).where({ 'users.id': req.userId });

@@ -8,6 +8,7 @@ const ExerciseController = require('./app/controllers/ExerciseController');
 const InstructorProfileController = require('./app/controllers/InstructorProfileController');
 const StudentProfileController = require('./app/controllers/StudentProfileController');
 const FitnessFormController = require('./app/controllers/FitnessFormController');
+const InstructorKeyController = require('./app/controllers/InstructorKeyController');
 
 const authMiddleware = require('./app/middlewares/auth');
 
@@ -26,6 +27,7 @@ routes.post('/user/:id/form', FitnessFormController.store);
 routes.post('/student-profile/upload', upload.single('file'), StudentProfileController.upload);
 routes.post('/instructor-profile', InstructorProfileController.store);
 routes.post('/instructor-profile/upload', upload.single('file'), InstructorProfileController.upload);
+routes.post('/admin/instructor-key', InstructorKeyController.store);
 routes.post('/exercises/:id', upload.single('file'), ExerciseController.upload);
 
 routes.put('/user', UserController.update);
@@ -36,6 +38,7 @@ routes.get('/user', UserController.list);
 routes.get('/user/:id', UserController.listOne);
 routes.get('/user/:id/form', FitnessFormController.list);
 routes.get('/instructor-profile/:id', InstructorProfileController.listOne);
+routes.get('/admin/instructor-key/search', InstructorKeyController.list);
 routes.get('/student-profile', StudentProfileController.list);
 routes.get('/student-profile/:id', StudentProfileController.listOne);
 routes.get('/exercises/:id', ExerciseController.listOne);
