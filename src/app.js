@@ -24,14 +24,6 @@ class App {
     this.server.use(Sentry.Handlers.requestHandler());
     this.server.use(cors());
     this.server.use(express.json());
-   /* this.server.use(
-      '/exercicios/upload',
-      express.static(path.resolve(__dirname, '..', 'img', 'uploads'))
-    );
-    this.server.use(
-      '/usuario/upload',
-      express.static(path.resolve(__dirname, '..', 'img', 'uploads'))
-    );*/
   }
 
   routes() {
