@@ -2,7 +2,8 @@ const Yup = require('yup');
 
 const connection = require('../../database/connection');
 const Logger = require('../../lib/logger');
-
+const differenceInYears = require('date-fns/differenceInYears');
+const parseISO = require('date-fns/parseISO');
 class StudentProfileController{
   async store(req, res){
     Logger.header('Controller - Student Profile - Store');
@@ -82,8 +83,9 @@ class StudentProfileController{
     const { search } = req.query;     
     
     let studentProfiles = connection('student_profile')
-      .select('student_profile.*', 'users.*')
+      .select('student_profile.*', 'users.*', 'student_workout')
       .leftJoin('users', 'user_id', 'users.id')
+      .leftJoin('student_workout', 'student_workout.student_id', 'users.id')
       .orderBy('users.first_name');
     
     if (search) {
@@ -97,7 +99,7 @@ class StudentProfileController{
         surname: row.surname,
         weight: row.weight,
         motivation: row.motivation,
-        created_at: row.created_at
+        prescribed_at: row.prescribed_at
       };
     });
     Logger.success('[200]');
@@ -115,12 +117,17 @@ class StudentProfileController{
       Logger.error('Profile not found');
       return res.status(404).json({ error: 'Profile not found'});
     }
+    
 
     const profileInfo = profile.map((row) => { 
+      const birthDate = row.birthdate;
+      const currentDate = new Date();
+      const age = differenceInYears(currentDate, birthDate);
       return{
         birthdate: row.birthdate, 
         gender: row.gender, 
-        phone: row.phone, 
+        phone: row.phone,
+        age, 
         motivation: row.motivation, 
         history: row.history, 
         weight: row.weight, 
@@ -130,9 +137,7 @@ class StudentProfileController{
         }
     });
     Logger.success('[200]');
-    return res.status(200).json({
-      ...profileInfo
-    });
+    return res.status(200).json(profileInfo);
   }
   async update(req, res){
     Logger.header('Controller - Student Profile - Update');

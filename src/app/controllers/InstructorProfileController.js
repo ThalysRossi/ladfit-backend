@@ -143,9 +143,7 @@ class InstructorProfileController{
       }
     });
     Logger.success('[200]');
-    return res.status(200).json({
-      ...profileInfo
-    });
+    return res.status(200).json(profileInfo);
   }
 }
 

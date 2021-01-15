@@ -11,7 +11,7 @@ class InstructorKeyController{
     const isAdmin = await connection('users')
       .select('users.*')
       .where({'users.id': req.userId})
-      .where('users.user_type', '2');
+      .andWhere('users.user_type', '2');
     if(isAdmin.length === 0){
         Logger.error('Unauthorised user');
         return res.status(401).json({ error: 'Unauthorised user'})
