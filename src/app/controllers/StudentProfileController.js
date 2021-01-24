@@ -49,12 +49,13 @@ class StudentProfileController{
         availability,
         user_id: req.userId
       };
+
       const [storeStudentProfile] = await connection('student_profile').insert(studentProfile);
 
       Logger.success('[200]');
       return res.json({
         id: req.userId,
-        ...storeStudentProfile,
+        ...storeStudentProfile
       });
     }
   async upload(req,res){

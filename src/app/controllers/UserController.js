@@ -135,16 +135,6 @@ class UserController {
     }
 
     /**
-     * Checa se a matrícula já existe no banco
-     
-    if (matricula) {
-      if (userExists.matricula === matricula) {
-        Logger.error('studentId already in use');
-        return res.status(400).json({ error: 'studentId already in use' });
-      }
-    }*/
-
-    /**
      * Valida que a senha inserida é a mesma armazenada
      */
     const checkPassword = (password) => {
@@ -186,7 +176,7 @@ class UserController {
       .select('users.*',)
       .orderBy('users.first_name');
     
-    if (search) {
+    if(search) {
       users = users.where('users.first_name', 'like', `%${search}%`).orWhere('users.surname', 'like', `%${search}%`);
     } 
     const query = await users;

@@ -38,14 +38,25 @@ class WorkoutController{
       workout_type: Yup.string('A,B or C expected').matches(/[ABC|abc]/).min(1).max(1),
       expiration_date: Yup.date().required('Expiration date is required'),
       methodology: Yup.string().max(20, 'Maximum 20 characters'),
-      repetitions: Yup.number().default(0),
-      rest: Yup.number().default(0),
-      sets: Yup.number().default(0),
-      exe_load: Yup.number().default(0)
+      repetitions: Yup.number().default(0).positive().max(100),
+      rest: Yup.number('Rest interval in seconds').positive().default(0).max(300),
+      sets: Yup.number().default(0).positive().max(10),
+      exe_load: Yup.number('Load in kilos').default(0).positive().max(1000)
     });
     if (!(await schema.isValid(req.body))) {
       Logger.error('Validation failed');
       return res.status(400).json({ error: 'Validation failed' });
+    }
+    const isExerciseStored = await connection('student_workout')
+      .select('student_workout.*')
+      .where({'student_workout.student_id': req.params.id})
+      .andWhere({'student_workout.instructor_id': req.userId})
+      .andWhere({'student_workout.workout_type': workout_type})
+      .andWhere({'student_workout.expiration_date': expiration_date})
+      .andWhere({'student_workout.exercise_id': exercise_id});
+    if(isExerciseStored.length > 0){
+      Logger.error('Exercise already in database');
+      return res.status(400).json({ error: 'Exercise already in database'});
     }
     const workout = {
       student_id: req.params.id,
@@ -148,7 +159,49 @@ class WorkoutController{
 
   }
   async update(req, res){
-      
+    Logger.header('Controller - Student Access - Update');
+
+    const { is_workout_done } = req.body;
+    Logger.log(`[${is_workout_done}]`);
+
+    //Checks if user is student
+    const isStudent = await connection('users')
+      .select('users.*')
+      .where({'users.id': req.userId})
+
+    if(!isStudent[0].is_active || isStudent[0].user_type !== 4){
+      Logger.error('Unauthorised user');
+      return res.status(401).json({ error: 'Unauthorised user'});
+    }
+
+    //checks if workout is done
+    const isWorkoutDone = await connection('student_access')
+      .select('student_access.is_workout_done')
+      .where({'student_access.id': req.params.id});
+    if(isWorkoutDone[0].is_workout_done){
+      Logger.error('Workout already done');
+      return res.status(401).json({ error: 'Workout already done'});
+    }
+
+    const schema = Yup.object({
+      is_workout_done: Yup.boolean()
+    });
+    if (!(await schema.isValid(req.body))) {
+      Logger.error('Validation failed');
+      return res.status(400).json({ error: 'Validation failed' });
+    }
+
+    const sendWorkout = {
+      is_workout_done: true
+    };
+
+    const uptadeWorkout = await connection('student_access')
+    .update(sendWorkout)
+    .where({'student_access.id': req.params.id})
+    .andWhere('student_access.time_start', 'like', `%${req.params.date}%`);
+
+    Logger.success('[200]');
+    return res.status(200).json(sendWorkout);
   }
 
 }
