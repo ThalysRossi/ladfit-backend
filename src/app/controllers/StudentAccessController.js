@@ -20,6 +20,7 @@ class StudentAccessController{
       .select('users.*')
       .where({'users.id': req.userId})
       const currentDate = format(new Date(), 'MMMM yyyy', {locale: locale});
+      //janky temporary code, fix ASAP
       const isPaid = await connection('payments')
         .select('payments.*')
         .where({'payments.student_id': req.userId});
