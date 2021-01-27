@@ -67,12 +67,13 @@ class UserController {
       user_type: instructor_key? '3' : '4',
       instructor_key: instructor_key? instructor_key : null
     };
-
+    ;
     /**
      * Insere os dados no banco e retorna o usuário
      */
     const [userId] = await connection('users').insert(user, 'id');
-    
+
+    delete user.password_hash;
     Logger.success('[200]');
     return res.json({
       id: userId,
@@ -166,7 +167,7 @@ class UserController {
       ...user,
     });
   }
-  // create profile controllers before touching this pile of cesium
+  
   async list(req, res) { 
     Logger.header('Controller - User - List');
 
