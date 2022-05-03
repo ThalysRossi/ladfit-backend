@@ -181,9 +181,7 @@ class StudentProfileController{
     return res.status(200).json({
       ...studentProfile
     });
-
   }
-
 }
 
 module.exports = new StudentProfileController();

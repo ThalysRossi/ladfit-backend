@@ -22,7 +22,6 @@ class UserController {
         return this.parent.password === value
       }),
       instructor_key: Yup.string().min(8).max(8)
-           
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -219,8 +218,5 @@ class UserController {
 
   }
 }
-
-
-
 
 module.exports = new UserController();

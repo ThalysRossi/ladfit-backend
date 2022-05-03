@@ -6,7 +6,6 @@ const parseISO = require('date-fns/parseISO');
 const isAfter = require('date-fns/isAfter');
 const format = require('date-fns/format');
 
-
 class WorkoutController{
   async store(req, res){
     Logger.header('Controller - Workout - Store');
@@ -78,9 +77,7 @@ class WorkoutController{
       ...workout
     });
 
-
   }
-  //implement student access controller
   async list(req, res){
     Logger.header('Controller - Workout - List');
 
@@ -124,7 +121,6 @@ class WorkoutController{
     });
     Logger.success('[200]')
     return res.status(200).json(workoutInfo);
-      
   }
   async listOne(req, res){
     Logger.header('Controller - Workout - ListOne');
@@ -153,11 +149,10 @@ class WorkoutController{
         img_path: row.img_path
       };
     });
-     
     Logger.success('[200]');
     return res.status(200).json(workoutInfo);
-
   }
+
   async update(req, res){
     Logger.header('Controller - Student Access - Update');
 
@@ -203,6 +198,6 @@ class WorkoutController{
     Logger.success('[200]');
     return res.status(200).json(sendWorkout);
   }
-
 }
+
 module.exports = new WorkoutController;

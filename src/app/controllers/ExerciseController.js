@@ -3,7 +3,6 @@ const Logger = require('../../lib/logger');
 
 const Yup = require('yup');
 
-
 class ExerciseController {
   async store(req, res) {
     Logger.header('Controller - Exercicios - Store');
@@ -56,7 +55,6 @@ class ExerciseController {
       .andWhere({'exe_valid.muscle_group': muscle_group});
       console.log(exeValidId);
 
-
     const exercise = {
       exe_name,
       exe_valid_id: exeValidId.id
@@ -71,24 +69,24 @@ class ExerciseController {
 
   async upload (req, res){
     const { originalname: img_name, filename: img_path } = req.file;
-        const file = {
-          img_name,
-          img_path,
-          img_type: 'Exercise'
-        };
-        console.log(req.file);
-        
-          const insertedFile = await connection('img_paths').insert(file);
-          const updateExercise = await connection('exercises')
-            .update({ img_path: insertedFile[0] })
-            .where({ 'exercises.id': req.params.id });
-        
-        Logger.success('[200]');
-        return res.json({
-          pic: file
-        });
+    const file = {
+      img_name,
+      img_path,
+      img_type: 'Exercise'
+    };
+    console.log(req.file);
+
+    const insertedFile = await connection('img_paths').insert(file);
+    const updateExercise = await connection('exercises')
+      .update({ img_path: insertedFile[0] })
+      .where({ 'exercises.id': req.params.id });
+    
+    Logger.success('[200]');
+    return res.json({
+      pic: file
+    });
   }
-  
+
   async list (req, res) {
     Logger.header('controller - exercises - list');
     const { search } = req.query;
@@ -97,14 +95,12 @@ class ExerciseController {
       .select('exercises.*','exe_valid.*')
       .leftJoin('exe_valid', 'exe_valid_id', 'exe_valid.id')     
       .orderBy('exe_valid.muscle_group', 'asc');
-      
-    
+
     if(search) {
       exercises = exercises.where('exercises.exe_name', 'like', `%${search}%`);
     }
-
     const query = await exercises;
-    
+
     const exerciseList = query.map(row => {
       return {
         exe_name: row.exe_name,
@@ -124,7 +120,7 @@ class ExerciseController {
       .select('exercises.*', 'exe_valid.*')
       .leftJoin('exe_valid', 'exe_valid_id', 'exe_valid.id')
       .where({'exercises.id': req.params.id})
-    
+
     if(exercise.length === 0) { 
       Logger.error('Exercise not found');
       return res.status(404).json({ error: 'Exercise not found' });
@@ -137,9 +133,10 @@ class ExerciseController {
         exe_name: row.exe_name,
       }
     });
-      Logger.success('[200]');
-      return res.json(exerciseInfo);
+    Logger.success('[200]');
+    return res.json(exerciseInfo);
   }
+
   async update(req,res){
     Logger.header('Controller - Exercises - Update');
 
@@ -157,7 +154,6 @@ class ExerciseController {
     Logger.header(
       `[${exe_type}][${muscle_group}][${exe_name}]`
     );
-    
     /**
      * Validação de entradas
      */
@@ -222,4 +218,3 @@ class ExerciseController {
 }
 
 module.exports = new ExerciseController();
-

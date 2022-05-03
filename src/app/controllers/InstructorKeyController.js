@@ -53,8 +53,8 @@ class InstructorKeyController{
     return res.status(200).json({
       tempKey
     });
-
   }
+
   async list(req, res){
     Logger.header('Controller - Instructor Key - List');
     const { search } = req.query;
@@ -74,9 +74,7 @@ class InstructorKeyController{
     });
     Logger.success('[200]');
     return res.status(200).json(list);
-
   }
-
 }
 
 module.exports = new InstructorKeyController;

@@ -25,7 +25,6 @@ class InstructorProfileController{
       return res.status(400).json({ error: 'Validation failed' });
     }
 
-
     //Check if instructor license is already in database
     const validLicense = await connection('instructor_profile')
       .select('instructor_profile.*')
@@ -44,7 +43,7 @@ class InstructorProfileController{
       Logger.error('Profile already exists');
       return res.status(400).json({error: 'Profile already exists'});
     }
-        
+
     const instructorProfile = {
       birthdate,
       gender,
@@ -69,12 +68,12 @@ class InstructorProfileController{
       img_type: 'Avatar'
     };
     console.log(req.file);
-        
+
     const insertedFile = await connection('img_paths').insert(file);
     const updateProfile = await connection('instructor_profile')
       .update({ avatar_id: insertedFile[0] })
       .where({ 'instructor_profile.user_id': req.userId });
-        
+
     Logger.success('[200]');
     return res.json({
       pic: file,
@@ -104,7 +103,7 @@ class InstructorProfileController{
       .leftJoin('users', 'user_id', 'users.id')
       .where({'instructor_profile.user_id': req.userId})
       .andWhere('users.user_type', '=', '3');
-        
+
     const instructorProfile = {
       birthdate: birthdate || instructorProfileExists.birthdate,
       gender: gender || instructorProfileExists.gender,
@@ -113,7 +112,7 @@ class InstructorProfileController{
       instructor_license: instructor_license || instructorProfileExists.instructor_license
     };
     await connection('instructor_profile').update(instructorProfile).where({'instructor_profile.user_id': req.userId});
-    
+
     Logger.success('[200]');
     return res.status(200).json({
       ...instructorProfile
@@ -121,7 +120,7 @@ class InstructorProfileController{
   }
   async listOne(req, res){
     Logger.header('Controller - Instructor Profile - ListOne');
-    
+
     const profile = await connection('instructor_profile')
       .select('instructor_profile.*', 'users.*')
       .leftJoin('users', 'user_id', 'users.id')
@@ -130,7 +129,7 @@ class InstructorProfileController{
       Logger.error('Profile not found');
       return res.status(404).json({ error: 'Profile not found'});
     }
-    
+
     const profileInfo = profile.map((row) => { 
       return{
         first_name: row.first_name,

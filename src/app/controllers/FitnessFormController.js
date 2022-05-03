@@ -5,7 +5,6 @@ const Logger = require('../../lib/logger');
 
 class FitnessFormController {
   async store(req, res){
-
     //Checks if form is already answered
     const isAnswered = await connection('fitness_form')
       .select('fitness_form.*')
@@ -32,7 +31,6 @@ class FitnessFormController {
       Logger.error('Validation failed');
       return res.status(400).json({ error: 'Validation failed' });
     }
-      
 
     //Checks if user is instructor
     const isInstructor = await connection('users')
@@ -52,41 +50,41 @@ class FitnessFormController {
       question_6, 
       question_7
     };
-       
     const [insertForm] = await connection('fitness_form').insert(form, 'id');
 
     Logger.success('[200]');
     return res.status(200).json({
       form    
     });           
-    }
-    async list(req, res){
-      Logger.header('Controller - Fitness Form PARQ - List');
+  }
 
-      const answeredForm = await connection('fitness_form')
-        .select('fitness_form.*')
-        .where({'fitness_form.student_id': req.params.id});
+  async list(req, res){
+    Logger.header('Controller - Fitness Form PARQ - List');
 
-      if(answeredForm.length === 0){
-        Logger.error('[404] User not found');
-        return res.status(404).json({ error: 'User not found'});
+    const answeredForm = await connection('fitness_form')
+      .select('fitness_form.*')
+      .where({'fitness_form.student_id': req.params.id});
+
+    if(answeredForm.length === 0){
+      Logger.error('[404] User not found');
+      return res.status(404).json({ error: 'User not found'});
+    };
+    const formInfo = answeredForm.map((row) => {
+      return{
+          instructor_id: row.instructor_id,
+          question_1: row.question_1,
+          question_2: row.question_2,
+          question_3: row.question_3,
+          question_4: row.question_4,
+          question_5: row.question_5,
+          question_6: row.question_6,
+          question_7: row.question_7
       };
-      const formInfo = answeredForm.map((row) => {
-        return{
-            instructor_id: row.instructor_id,
-            question_1: row.question_1,
-            question_2: row.question_2,
-            question_3: row.question_3,
-            question_4: row.question_4,
-            question_5: row.question_5,
-            question_6: row.question_6,
-            question_7: row.question_7
-        };
-      });
-      Logger.success('[200]');
-      return res.status(200).json(formInfo);
+    });
 
-    }
+    Logger.success('[200]');
+    return res.status(200).json(formInfo);
+  }
 }
 
 module.exports = new FitnessFormController;
